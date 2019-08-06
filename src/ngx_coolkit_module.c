@@ -126,6 +126,7 @@ ngx_coolkit_add_variables(ngx_conf_t *cf)
     return NGX_OK;
 }
 
+// 在 SERVER_REWRITE 阶段介入处理
 ngx_int_t
 ngx_coolkit_init(ngx_conf_t *cf)
 {

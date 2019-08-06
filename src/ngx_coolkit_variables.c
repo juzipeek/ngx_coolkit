@@ -32,12 +32,16 @@
  * source: ngx_http_variables.c/ngx_http_variable_remote_user
  * Copyright (C) Igor Sysoev
  */
+// 从请求头 authorization 中截取 password 部分内容作为变量返回
 ngx_int_t
 ngx_coolkit_variable_remote_passwd(ngx_http_request_t *r,
     ngx_http_variable_value_t *v, uintptr_t data)
 {
     ngx_int_t  rc;
 
+    // 使用 Basic 验证
+    // 从请求头中获得 authorization header 进行 base64 decode 得到：[user]:[password]
+    // 分别截取 user、password 存储到请求头 user、passwd 头中
     rc = ngx_http_auth_basic_user(r);
 
     if (rc == NGX_DECLINED) {
@@ -49,6 +53,7 @@ ngx_coolkit_variable_remote_passwd(ngx_http_request_t *r,
         return NGX_ERROR;
     }
 
+    // 从请求头中获得 passwd headr 作为变量值返回
     v->len = r->headers_in.passwd.len;
     v->valid = 1;
     v->no_cacheable = 0;
@@ -58,7 +63,7 @@ ngx_coolkit_variable_remote_passwd(ngx_http_request_t *r,
     return NGX_OK;
 }
 
-
+// 取当前 location 名字存储到变量中
 ngx_int_t
 ngx_coolkit_variable_location(ngx_http_request_t *r,
     ngx_http_variable_value_t *v, uintptr_t data)

@@ -38,6 +38,7 @@ ngx_coolkit_override_method_handler(ngx_http_request_t *r)
     ngx_uint_t               original, j;
 
     cklcf = ngx_http_get_module_loc_conf(r, ngx_coolkit_module);
+    // 请求的模块上下文
     ckctx = ngx_http_get_module_ctx(r, ngx_coolkit_module);
 
     /* always test against original request method */
@@ -48,6 +49,7 @@ ngx_coolkit_override_method_handler(ngx_http_request_t *r)
     }
 
     if ((cklcf->override_source) && (cklcf->override_methods & original)) {
+        // 获得应该使用的 method，存储在 method 变量中
         if (ngx_http_complex_value(r, cklcf->override_source, &method)
             != NGX_OK)
         {
@@ -80,11 +82,13 @@ ngx_coolkit_override_method_handler(ngx_http_request_t *r)
                     ngx_http_set_ctx(r, ckctx, ngx_coolkit_module);
                 }
 
+                // 保存原始 method
                 if (ckctx->overridden_method == 0) {
                     ckctx->overridden_method = r->method;
                     ckctx->overridden_method_name = r->method_name;
                 }
 
+                // 更新请求方法
                 r->method = b[j].mask;
                 r->method_name = b[j].name;
                 r->method_name.len--; /* "hidden" space */
